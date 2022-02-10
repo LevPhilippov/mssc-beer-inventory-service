@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,6 +26,7 @@ public class InventoryServiceReactiveImpl implements InventoryReactiveService {
     private final BeerInventoryMapper beerInventoryMapper;
     private final BeerInventoryReactiveRepository beerInventoryRepository;
 
+    @Transactional(readOnly = true, propagation = Propagation.NEVER)
     @Override
     public Flux<BeerInventoryDto> findAllInventoryRecordsByBeerId(String beerId) {
         return beerInventoryRepository
@@ -34,7 +36,7 @@ public class InventoryServiceReactiveImpl implements InventoryReactiveService {
                 .map(beerInventoryMapper::beerInventoryToBeerInventoryDto);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.NESTED)
     @Override
     public Mono<Void> newInventoryRecord(Mono<BeerDto> beerDto) {
         return beerDto
@@ -46,9 +48,13 @@ public class InventoryServiceReactiveImpl implements InventoryReactiveService {
         return UUID.randomUUID().toString();
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.NEVER)
+    @Override
+    public Mono<Long> count() {
+        return beerInventoryRepository.count();
+    }
 
-
-//    @Override
+    //    @Override
 //    public Mono<Void> newInventoryRecord(Mono<BeerDto> beerDtoMono) {
 //        return beerDtoMono.map(beerDto -> BeerInventory.builder().beerId(beerDto.getId()).upc(beerDto.getUpc()).quantityOnHand(beerDto.getQuantityOnHand()).build())
 //                .log("Saving entity: ")
