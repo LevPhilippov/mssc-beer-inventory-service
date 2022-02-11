@@ -2,6 +2,7 @@ package guru.sfg.beer.inventory.service.config;
 
 import dev.miku.r2dbc.mysql.MySqlConnectionFactoryProvider;
 import io.r2dbc.spi.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -27,15 +28,20 @@ import static io.r2dbc.spi.ConnectionFactoryOptions.*;
 @Configuration
 public class ReactiveDataSourceConfig extends AbstractR2dbcConfiguration {
 
+    @Value("${spring.datasource.username}")
+    private String username;
+    @Value("${spring.datasource.password}")
+    private String password;
+
     @Override
     @Bean
     public ConnectionFactory connectionFactory() {
         ConnectionFactoryOptions options = ConnectionFactoryOptions.builder()
                 .option(DRIVER, "mysql")
-                .option(HOST, "database-1.ck6kohrdxhty.us-east-2.rds.amazonaws.com")
-                .option(USER, "beer_inventory_service")
+                .option(HOST, "localhost")
+                .option(USER, username)
                 .option(PORT, 3306)  // optional, default 3306
-                .option(PASSWORD, "password") // optional, default null, null means has no password
+                .option(PASSWORD, password) // optional, default null, null means has no password
                 .option(DATABASE, "beerinventoryservice") // optional, default null, null means not specifying the database
                 .option(Option.valueOf("useUnicode"), "true")
                 .option(Option.valueOf("characterEncoding"), "UTF-8")

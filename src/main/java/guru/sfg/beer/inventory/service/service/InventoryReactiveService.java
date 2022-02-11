@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface InventoryReactiveService {
     Flux<BeerInventoryDto> findAllInventoryRecordsByBeerId(String id);
     Mono<Void> newInventoryRecord(Mono<BeerDto> beerDto);
+    Mono<Long> count();
 }

@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+import static org.springframework.data.relational.core.query.Criteria.empty;
 import static org.springframework.data.relational.core.query.Criteria.where;
 import static org.springframework.data.relational.core.query.Query.query;
 
@@ -30,7 +31,6 @@ public class BeerInventoryReactiveRepositoryImpl implements BeerInventoryReactiv
                 .all();
     }
 
-    @Transactional(propagation = Propagation.NESTED)
     @Override
     public Mono<BeerInventory> save(BeerInventory save) {
         return template.insert(BeerInventory.class)
@@ -45,7 +45,6 @@ public class BeerInventoryReactiveRepositoryImpl implements BeerInventoryReactiv
                 .all();
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public Mono<Void> delete(BeerInventory delete) {
         return template.getDatabaseClient()
@@ -53,12 +52,16 @@ public class BeerInventoryReactiveRepositoryImpl implements BeerInventoryReactiv
                 .bind("id",delete.getId())
                 .then();
     }
-    @Transactional(propagation = Propagation.NESTED)
     @Override
     public Mono<BeerInventory> findById(String id) {
         return template.select(BeerInventory.class)
                 .from("beer_inventory")
                 .matching(query(where("id").is(id.toString())))
                 .first();
+    }
+
+    @Override
+    public Mono<Long> count() {
+        return template.count(query(empty()),BeerInventory.class);
     }
 }
