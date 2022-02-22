@@ -3,6 +3,9 @@
 
 This repository contains source code examples used to support my on-line courses about the Spring Framework.
 
+OpenAPI Documentation:
+<a> https://app.swaggerhub.com/apis-docs/github.levphilippov/mssc-beer-inventory-service/1.0#/ </a>
+
 <br>
 Port mapping for local development.
 <table>
